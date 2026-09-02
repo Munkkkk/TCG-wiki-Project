@@ -1,0 +1,7 @@
+<article [routerLink]="['/card', name()]">
+  <img [src]="image()" [alt]="name()">
+
+  <h3>{{ name() }}</h3>
+
+  <p>Rareté : {{ rarity() }}</p>
+</article>

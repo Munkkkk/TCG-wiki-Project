@@ -1,0 +1,33 @@
+.wiki-page {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.wiki-page h1 {
+  font-size: 40px;
+}
+
+.wiki-content {
+  display: flex;
+  gap: 40px;
+  margin-top: 30px;
+}
+
+.wiki-image {
+  width: 300px;
+}
+
+.wiki-image img {
+  width: 100%;
+  border-radius: 10px;
+}
+
+.wiki-description {
+  flex: 1;
+}
+
+.wiki-description h2,
+.wiki-page section h2 {
+  margin-top: 0;
+}

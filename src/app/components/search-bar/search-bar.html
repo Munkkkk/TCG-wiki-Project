@@ -1,0 +1,6 @@
+<input
+  type="text"
+  [(ngModel)]="search"
+  (ngModelChange)="searchChange.emit(search)"
+  placeholder="Rechercher une carte..."
+>

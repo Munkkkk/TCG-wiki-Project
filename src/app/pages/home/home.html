@@ -1,0 +1,36 @@
+<section>
+    <h2>Wiki-Masters</h2>
+
+   <app-search-bar
+  (searchChange)="search = $event"
+></app-search-bar>
+
+<select [(ngModel)]="rarityFilter">
+  <option value="">Toutes les raretés</option>
+    @for (rarity of rarities; track rarity) {
+  <option [value]="rarity">{{ rarity }}</option>
+}
+</select>
+
+
+@if (filteredCards.length > 0) {
+
+  <div class="cards-grid">
+    @for (card of filteredCards; track card.name) {
+      <app-card
+        [name]="card.name"
+        [rarity]="card.rarity"
+        [image]="card.image"
+      ></app-card>
+    }
+  </div>
+
+} @else {
+
+  <p class="no-results">
+    🔎 Aucune carte trouvée.
+  </p>
+
+}
+
+</section>
