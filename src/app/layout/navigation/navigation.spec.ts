@@ -30,7 +30,7 @@ describe('Navigation (menu latéral)', () => {
   it('affiche les sections à venir grisées, sans lien', () => {
     const el = rendre();
     const bientot = [...el.querySelectorAll('.lateral .bientot')];
-    expect(bientot.map((b) => b.querySelector('.texte')?.textContent)).toEqual(['Duels', 'Marché', 'Amis', 'Classement']);
+    expect(bientot.map((b) => b.querySelector('.texte')?.textContent)).toEqual(['Duels', 'Marché', 'Amis', 'Guilde', 'Classement']);
     for (const b of bientot) {
       expect(b.querySelector('small')?.textContent).toBe('Bientôt');
       expect(b.tagName).not.toBe('A');

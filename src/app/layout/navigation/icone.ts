@@ -16,6 +16,7 @@ import { Icone } from './liens';
         @case ('duels') { <path d="M5 3l9 9M3 5l2-2M14 12l-3 3M19 3l-9 9M21 5l-2-2M10 12l3 3M7 17l-3 3M17 17l3 3" /> }
         @case ('marche') { <path d="M4 9l1.5-5h13L20 9M4 9h16v11H4zM9 20v-6h6v6" /> }
         @case ('amis') { <circle cx="9" cy="8" r="3.5" /><path d="M2.5 20c.8-3.5 3.3-5.5 6.5-5.5s5.7 2 6.5 5.5M16 4.5a3.5 3.5 0 0 1 0 7M18 14.5c2 .6 3.2 2.6 3.5 5.5" /> }
+        @case ('guilde') { <path d="M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6z" /><path d="M9 12l2 2 4-4" /> }
         @case ('classement') { <path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3" /> }
       }
     </svg>

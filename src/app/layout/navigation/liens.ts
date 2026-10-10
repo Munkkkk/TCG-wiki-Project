@@ -1,4 +1,4 @@
-export type Icone = 'paquets' | 'album' | 'doublons' | 'profil' | 'duels' | 'marche' | 'amis' | 'classement';
+export type Icone = 'paquets' | 'album' | 'doublons' | 'profil' | 'duels' | 'marche' | 'amis' | 'guilde' | 'classement';
 
 export interface EntreeMenu {
   libelle: string;
@@ -15,5 +15,6 @@ export const MENU: EntreeMenu[] = [
   { libelle: 'Duels', icone: 'duels', route: null },
   { libelle: 'Marché', icone: 'marche', route: null },
   { libelle: 'Amis', icone: 'amis', route: null },
+  { libelle: 'Guilde', icone: 'guilde', route: null },
   { libelle: 'Classement', icone: 'classement', route: null },
 ];
