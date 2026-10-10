@@ -1,27 +1,52 @@
-.paquets { display: flex; gap: 56px; align-items: flex-start; }
-.paquet {
-  width: 260px; height: 364px; flex-shrink: 0; border-radius: 12px;
-  border: 1px solid var(--bordure); background: var(--surface);
-  display: grid; place-items: center; color: var(--gris); letter-spacing: 3px; font-size: 11px;
+/* Tout centré : paquet en grand, état dessous, dernières cartes en rangée. */
+.paquets {
+  display: flex; flex-direction: column; align-items: center; gap: 28px;
+  min-height: calc(100vh - 160px); justify-content: center;
+  text-align: center;
 }
-.etat { display: flex; flex-direction: column; gap: 8px; }
+
+/* Le paquet : cliquable pour l'ouvrir */
+.paquet {
+  position: relative; width: 300px; aspect-ratio: 5 / 7;
+  border: 1px solid #3a3a42; border-radius: 16px; cursor: pointer; overflow: hidden;
+  color: var(--texte);
+  background:
+    linear-gradient(115deg, transparent 35%, rgb(255 255 255 / 0.07) 48%, transparent 60%) 0 0 / 250% 100%,
+    repeating-linear-gradient(45deg, #1d1d23 0 12px, #18181d 12px 24px);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+  box-shadow: 0 24px 50px rgb(0 0 0 / 0.55);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  animation: brillance 4s linear infinite;
+}
+.paquet::before {
+  content: ''; position: absolute; inset: 14px; border: 1px solid #34343c; border-radius: 10px;
+}
+.paquet:not(:disabled):hover { transform: translateY(-6px) rotate(-1deg); box-shadow: 0 34px 60px rgb(0 0 0 / 0.65); }
+.paquet:disabled { cursor: not-allowed; opacity: 0.45; animation: none; }
+.paquet-nom { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; }
+.paquet-sous { font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gris); }
+@keyframes brillance { from { background-position: 150% 0, 0 0; } to { background-position: -100% 0, 0 0; } }
+
+.etat { display: flex; flex-direction: column; align-items: center; gap: 8px; }
 .etat p { margin: 0; }
 .compteur { font-size: 64px; font-weight: 600; letter-spacing: -2px; line-height: 1; }
-.compteur small { font-size: 18px; color: var(--gris); font-weight: 400; letter-spacing: 0; }
-.jauge { width: 320px; max-width: 100%; height: 3px; background: var(--bordure); border-radius: 2px; margin: 8px 0; }
+.compteur small { font-size: 20px; color: var(--gris); font-weight: 400; letter-spacing: 0; }
+.jauge { width: 360px; max-width: 80vw; height: 3px; background: var(--bordure); border-radius: 2px; margin: 8px 0; }
 .jauge i { display: block; height: 100%; background: var(--texte); border-radius: 2px; transition: width 0.3s; }
-.actions { display: flex; gap: 18px; align-items: center; margin-top: 14px; flex-wrap: wrap; }
-.petit { font-size: 12px; margin-top: 12px !important; }
-.dernieres { margin-left: auto; width: 280px; border-left: 1px solid var(--bordure); padding-left: 24px; }
-.dernieres h2 { font-size: 13px; margin-bottom: 10px; }
-.dernieres a {
-  display: flex; align-items: center; gap: 8px; padding: 7px 0;
-  font-size: 13px; text-decoration: none; border-bottom: 1px solid var(--bordure);
-}
+.actions { display: flex; gap: 18px; align-items: center; justify-content: center; margin-top: 12px; flex-wrap: wrap; }
+.petit { font-size: 12px; margin-top: 10px !important; }
+
+/* Dernières cartes en rangée de miniatures */
+.dernieres { width: 100%; max-width: 1200px; border-top: 1px solid var(--bordure); padding-top: 22px; }
+.dernieres h2 { font-size: 13px; color: var(--gris); font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 14px; }
+.rangee { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+.mini { width: 110px; text-decoration: none; transition: transform 0.2s ease; }
+.mini:hover { transform: translateY(-4px); }
+
 @media (max-width: 767px) {
-  .paquets { flex-direction: column; align-items: stretch; gap: 20px; }
-  .paquet { width: 150px; height: 210px; margin: 0 auto; order: 1; }
-  .etat { order: 0; }
-  .etat .actions { order: 2; }
-  .dernieres { margin: 0; width: auto; border: 0; padding: 0; order: 3; }
+  .paquets { min-height: 0; gap: 20px; }
+  .paquet { width: 200px; }
+  .compteur { font-size: 52px; }
+  .mini { width: 92px; }
 }
+@media (prefers-reduced-motion: reduce) { .paquet { animation: none; transition: none; } }

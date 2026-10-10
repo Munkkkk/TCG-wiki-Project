@@ -5,19 +5,24 @@ import { Carte, ResultatOuverture } from '../../core/modeles';
 import { formatDuree } from '../../core/temps';
 import { Router, RouterLink } from '@angular/router';
 import { Ouverture } from './ouverture/ouverture';
+import { CarteVisuelle } from '../../ui/carte/carte';
 
 const PRIX_PAQUET = 100;
 
 @Component({
   selector: 'app-page-paquets',
-  imports: [Ouverture, RouterLink],
+  imports: [Ouverture, RouterLink, CarteVisuelle],
   styleUrl: './paquets.css',
   template: `
     @if (session.moi(); as moi) {
       <div class="paquets">
-        <div class="paquet">PAQUET</div>
+        <button class="paquet" (click)="ouvrir('stock')" [disabled]="enCours() || moi.paquetsStockes < 1"
+          aria-label="Ouvrir un paquet">
+          <span class="paquet-nom">WikiCards</span>
+          <span class="paquet-sous">5 cartes</span>
+        </button>
+
         <div class="etat">
-          <p class="gris">Paquets disponibles</p>
           <p class="compteur">{{ moi.paquetsStockes }} <small>/ {{ moi.paquetsMax }}</small></p>
           <div class="jauge"><i [style.width.%]="(moi.paquetsStockes / moi.paquetsMax) * 100"></i></div>
           <p class="gris">
@@ -30,14 +35,17 @@ const PRIX_PAQUET = 100;
           @if (erreur()) { <p class="erreur">{{ erreur() }}</p> }
           <p class="gris petit">Légendaire garantie dans {{ moi.paquetsAvantPitie }} {{ moi.paquetsAvantPitie === 1 ? 'paquet' : 'paquets' }}</p>
         </div>
-        <aside class="dernieres">
+
+        <section class="dernieres">
           <h2>Dernières cartes</h2>
-          @for (c of dernieres(); track $index) {
-            <a [routerLink]="['/carte', c.id]"><span class="pastille" [class]="c.rarete"></span>{{ c.titre }}</a>
-          } @empty {
-            <p class="gris petit">Ouvre un paquet pour commencer.</p>
-          }
-        </aside>
+          <div class="rangee">
+            @for (c of dernieres(); track $index) {
+              <a class="mini" [routerLink]="['/carte', c.id]" [attr.title]="c.titre"><app-carte [carte]="c" taille="mini" /></a>
+            } @empty {
+              <p class="gris petit">Ouvre un paquet pour commencer.</p>
+            }
+          </div>
+        </section>
       </div>
     }
     @if (ouverture(); as r) { <app-ouverture [resultat]="r" (fermer)="ouverture.set(null)" /> }
