@@ -1,6 +1,9 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import { gestionnaireErreurs } from './erreurs.js';
+import { exigerConnexion } from './middleware/session.js';
+import { routeurAuth } from './routes/auth.js';
+import { routeurMoi } from './routes/moi.js';
 
 export function creerApp(db, options = {}) {
   const secret = options.jwtSecret ?? process.env.JWT_SECRET;
@@ -15,6 +18,9 @@ export function creerApp(db, options = {}) {
     res.json({ ok: true });
   });
 
+  const exiger = exigerConnexion(secret);
+  app.use('/api/auth', routeurAuth(db, { secret, limiteConnexion: options.limiteConnexion }));
+  app.use('/api/moi', exiger, routeurMoi(db));
   // ROUTES (ajoutées par les tâches suivantes)
 
   app.use('/api', (req, res) => {
