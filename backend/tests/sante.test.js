@@ -15,6 +15,18 @@ describe('socle', () => {
     expect(rep.body).toEqual({ ok: true });
   });
 
+  it('refuse un secret JWT faible en production', () => {
+    const avant = process.env.NODE_ENV;
+    process.env.NODE_ENV = 'production';
+    try {
+      expect(() => creerApp(db, { jwtSecret: 'court' })).toThrow(/JWT_SECRET/);
+      expect(() => creerApp(db, { jwtSecret: 'une-longue-chaine-aleatoire' })).toThrow(/JWT_SECRET/);
+      expect(() => creerApp(db, { jwtSecret: 'x'.repeat(32) })).not.toThrow();
+    } finally {
+      if (avant === undefined) delete process.env.NODE_ENV; else process.env.NODE_ENV = avant;
+    }
+  });
+
   it('crée toutes les tables', async () => {
     const [tables] = await db.query('SHOW TABLES');
     const noms = tables.map((t) => Object.values(t)[0]);

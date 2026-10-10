@@ -4,6 +4,7 @@ import { ErreurJeu } from '../erreurs.js';
 import { versCarteVue } from '../jeu/cartes.js';
 
 const PAR_PAGE_MAX = 100;
+const PAGE_MAX = 10000;
 
 const listeAutorisee = (valeur, autorisees) =>
   (typeof valeur === 'string' ? valeur.split(',') : []).filter((v) => autorisees.includes(v));
@@ -28,7 +29,7 @@ export function routeurAlbum(db) {
   const r = Router();
 
   r.get('/', async (req, res) => {
-    const page = Math.max(1, Number.parseInt(req.query.page, 10) || 1);
+    const page = Math.min(PAGE_MAX, Math.max(1, Number.parseInt(req.query.page, 10) || 1));
     const parPage = Math.min(PAR_PAGE_MAX, Math.max(1, Number.parseInt(req.query.parPage, 10) || 60));
     const decalage = (page - 1) * parPage;
     const { where, params } = filtres(req.query);
@@ -40,7 +41,7 @@ export function routeurAlbum(db) {
         AND NOT EXISTS (SELECT 1 FROM cartes_joueur cj WHERE cj.joueur_id = ? AND cj.carte_id = c.id)${where}`;
       [[{ total }]] = await db.query(`SELECT COUNT(*) AS total ${base}`, [req.joueurId, ...params]);
       const [lignes] = await db.query(
-        `SELECT c.* ${base} ORDER BY c.rarete DESC, c.titre LIMIT ? OFFSET ?`,
+        `SELECT c.* ${base} ORDER BY c.rarete DESC, c.titre, c.id LIMIT ? OFFSET ?`,
         [req.joueurId, ...params, parPage, decalage],
       );
       cartes = lignes.map((c) => ({ ...versCarteVue(c), quantite: 0, epinglee: false }));
@@ -52,7 +53,7 @@ export function routeurAlbum(db) {
       [[{ total }]] = await db.query(`SELECT COUNT(DISTINCT c.id) AS total ${base}`, [req.joueurId, ...params]);
       const [lignes] = await db.query(
         `SELECT c.*, COUNT(*) AS quantite, MAX(e.carte_id IS NOT NULL) AS epinglee ${base}
-         GROUP BY c.id ORDER BY epinglee DESC, c.rarete DESC, c.titre LIMIT ? OFFSET ?`,
+         GROUP BY c.id ORDER BY epinglee DESC, c.rarete DESC, c.titre, c.id LIMIT ? OFFSET ?`,
         [req.joueurId, ...params, parPage, decalage],
       );
       cartes = lignes.map((c) => ({ ...versCarteVue(c), quantite: Number(c.quantite), epinglee: Boolean(c.epinglee) }));

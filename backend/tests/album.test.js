@@ -68,6 +68,15 @@ describe('GET /api/album', () => {
   });
 });
 
+describe('page hors bornes', () => {
+  it('renvoie 200 et une liste vide pour une page gigantesque', async () => {
+    const { id } = await scenario();
+    const rep = await get('/api/album?page=99999999999999999999', id);
+    expect(rep.status).toBe(200);
+    expect(rep.body.cartes).toEqual([]);
+  });
+});
+
 describe('épingles', () => {
   it('épingle une carte possédée, qui passe en tête', async () => {
     const { id, ornithorynque } = await scenario();

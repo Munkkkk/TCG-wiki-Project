@@ -1,4 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { ApiService } from './api';
 import { Moi } from './modeles';
 
@@ -14,11 +15,19 @@ export class SessionService {
     this.recuLe.set(Date.now());
   }
 
+  /**
+   * Recharge le joueur. Seul un 401 vide la session (et renvoie null) ;
+   * toute autre erreur (réseau, 5xx) laisse `moi` intact et est relancée.
+   */
   async charger(): Promise<Moi | null> {
     try {
       this.definir(await this.api.moi());
-    } catch {
-      this.moi.set(null);
+    } catch (e) {
+      if (e instanceof HttpErrorResponse && e.status === 401) {
+        this.moi.set(null);
+        return null;
+      }
+      throw e;
     }
     return this.moi();
   }

@@ -7,8 +7,8 @@ import {
 
 export function messageErreur(e: unknown): string {
   if (e instanceof HttpErrorResponse) {
-    if (e.status === 0) return 'Connexion perdue, réessaie.';
-    if (typeof e.error?.message === 'string') return e.error.message;
+    if (typeof e.error?.message === 'string' && e.status !== 0) return e.error.message;
+    if (e.status === 0 || e.status >= 500) return 'Connexion perdue, réessaie.';
   }
   return 'Une erreur est survenue, réessaie.';
 }

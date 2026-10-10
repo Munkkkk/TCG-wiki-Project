@@ -12,6 +12,9 @@ import { routeurDoublons } from './routes/doublons.js';
 export function creerApp(db, options = {}) {
   const secret = options.jwtSecret ?? process.env.JWT_SECRET;
   if (!secret) throw new Error('JWT_SECRET manquant');
+  if (process.env.NODE_ENV === 'production' && (secret === 'une-longue-chaine-aleatoire' || secret.length < 32)) {
+    throw new Error('JWT_SECRET trop faible en production (32 caractères minimum, pas la valeur d’exemple)');
+  }
 
   const app = express();
   app.use(express.json());

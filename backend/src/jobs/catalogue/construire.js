@@ -72,7 +72,7 @@ export async function enregistrerCatalogue(db, lignes, maintenant) {
     await conn.commit();
     return r.affectedRows;
   } catch (e) {
-    await conn.rollback();
+    await conn.rollback().catch(() => {});
     throw e;
   } finally {
     conn.release();

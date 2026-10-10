@@ -3,7 +3,7 @@ import { ApiService, messageErreur } from '../../core/api';
 import { SessionService } from '../../core/session';
 import { Carte, ResultatOuverture } from '../../core/modeles';
 import { formatDuree } from '../../core/temps';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Ouverture } from './ouverture/ouverture';
 
 const PRIX_PAQUET = 100;
@@ -28,7 +28,7 @@ const PRIX_PAQUET = 100;
             <button class="lien" (click)="ouvrir('achat')" [disabled]="enCours() || moi.pieces < prix">Acheter · {{ prix }} pièces</button>
           </div>
           @if (erreur()) { <p class="erreur">{{ erreur() }}</p> }
-          <p class="gris petit">Légendaire garantie dans {{ moi.paquetsAvantPitie }} paquets</p>
+          <p class="gris petit">Légendaire garantie dans {{ moi.paquetsAvantPitie }} {{ moi.paquetsAvantPitie === 1 ? 'paquet' : 'paquets' }}</p>
         </div>
         <aside class="dernieres">
           <h2>Dernières cartes</h2>
@@ -46,6 +46,7 @@ const PRIX_PAQUET = 100;
 export class PagePaquets implements OnInit, OnDestroy {
   protected session = inject(SessionService);
   private api = inject(ApiService);
+  private router = inject(Router);
   protected prix = PRIX_PAQUET;
   protected enCours = signal(false);
   protected erreur = signal('');
@@ -67,8 +68,13 @@ export class PagePaquets implements OnInit, OnDestroy {
       this.maintenant.set(Date.now());
       if (this.resteMs() === 0 && !this.rechargeEnCours) {
         this.rechargeEnCours = true;
-        await this.session.charger();
-        this.rechargeEnCours = false;
+        try {
+          if ((await this.session.charger()) === null) this.router.navigateByUrl('/connexion');
+        } catch (e) {
+          this.erreur.set(messageErreur(e));
+        } finally {
+          this.rechargeEnCours = false;
+        }
       }
     }, 1000);
   }

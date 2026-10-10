@@ -56,7 +56,7 @@ export function routeurDoublons(db) {
       await conn.commit();
       res.json({ cartesVendues, piecesGagnees, pieces });
     } catch (e) {
-      await conn.rollback();
+      await conn.rollback().catch(() => {});
       throw e;
     } finally {
       conn.release();

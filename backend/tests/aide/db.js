@@ -7,6 +7,9 @@ export const NOM_BASE_TEST = process.env.DB_NAME_TEST || 'wikimasters_test';
 const TABLES = ['ouvertures', 'epingles', 'cartes_joueur', 'catalogue', 'joueurs', 'vues_mensuelles'];
 
 export async function preparerBaseTest() {
+  if (NOM_BASE_TEST === process.env.DB_NAME) {
+    throw new Error(`NOM_BASE_TEST (${NOM_BASE_TEST}) est la base de développement : refus de la vider.`);
+  }
   const admin = await mysql.createConnection({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,

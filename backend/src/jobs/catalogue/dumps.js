@@ -34,7 +34,7 @@ export async function importerMois(db, mois, lignes, seuil) {
     }
     await conn.commit();
   } catch (e) {
-    await conn.rollback();
+    await conn.rollback().catch(() => {});
     throw e;
   } finally {
     conn.release();

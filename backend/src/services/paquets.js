@@ -88,10 +88,11 @@ export async function ouvrirPaquet(db, joueurId, source, { maintenant = new Date
       pieces += venteAuto.pieces;
     }
 
+    const sansLegendaire = majCompteurPitie(j.paquets_sans_legendaire, cartes.map((c) => c.rarete));
     await conn.query(
       `UPDATE joueurs SET paquets_stockes = ?, dernier_calcul = ?, pieces = ?, paquets_sans_legendaire = ?
        WHERE id = ?`,
-      [paquetsStockes, dernierCalcul, pieces, majCompteurPitie(j.paquets_sans_legendaire, cartes.map((c) => c.rarete)), joueurId],
+      [paquetsStockes, dernierCalcul, pieces, sansLegendaire, joueurId],
     );
     await conn.query(
       'INSERT INTO ouvertures (joueur_id, ouverte_le, source, cartes) VALUES (?, ?, ?, ?)',
@@ -99,10 +100,13 @@ export async function ouvrirPaquet(db, joueurId, source, { maintenant = new Date
     );
     await conn.commit();
 
-    const [[jMaj]] = await conn.query('SELECT * FROM joueurs WHERE id = ?', [joueurId]);
+    // État reconstruit en mémoire : aucune lecture après le commit (pas de 500 sur une ouverture validée).
+    const jMaj = {
+      ...j, paquets_stockes: paquetsStockes, dernier_calcul: dernierCalcul, pieces, paquets_sans_legendaire: sansLegendaire,
+    };
     return { cartes: cartesVues, etat: etatJoueur(jMaj, maintenant), venteAuto };
   } catch (e) {
-    await conn.rollback();
+    await conn.rollback().catch(() => {});
     throw e;
   } finally {
     conn.release();
