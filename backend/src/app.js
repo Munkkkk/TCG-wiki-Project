@@ -4,6 +4,7 @@ import { gestionnaireErreurs } from './erreurs.js';
 import { exigerConnexion } from './middleware/session.js';
 import { routeurAuth } from './routes/auth.js';
 import { routeurMoi } from './routes/moi.js';
+import { routeurPaquets } from './routes/paquets.js';
 
 export function creerApp(db, options = {}) {
   const secret = options.jwtSecret ?? process.env.JWT_SECRET;
@@ -21,6 +22,7 @@ export function creerApp(db, options = {}) {
   const exiger = exigerConnexion(secret);
   app.use('/api/auth', routeurAuth(db, { secret, limiteConnexion: options.limiteConnexion }));
   app.use('/api/moi', exiger, routeurMoi(db));
+  app.use('/api/paquets', exiger, routeurPaquets(db, { rng: options.rng }));
   // ROUTES (ajoutées par les tâches suivantes)
 
   app.use('/api', (req, res) => {
