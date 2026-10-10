@@ -13,21 +13,21 @@ import { Selection, basculer, definirQuantite, totalSelection, toutSelectionner 
     <p class="gris">Tu gardes toujours un exemplaire de chaque carte. Les cartes épinglées ne sont jamais vendues.</p>
 
     <div class="outils">
-      <button class="bouton secondaire" (click)="selection.set(toutSelectionner(doublons(), null))">Tout sélectionner</button>
-      <button class="bouton secondaire" (click)="selection.set(toutSelectionner(doublons(), 'commune'))">Toutes les Communes</button>
-      <button class="bouton secondaire" (click)="selection.set(toutSelectionner(doublons(), 'rare'))">Toutes les Rares</button>
-      <button class="lien" (click)="selection.set(vide)">Vider</button>
+      <button class="bouton secondaire" (click)="majSelection(toutSelectionner(doublons(), null))">Tout sélectionner</button>
+      <button class="bouton secondaire" (click)="majSelection(toutSelectionner(doublons(), 'commune'))">Toutes les Communes</button>
+      <button class="bouton secondaire" (click)="majSelection(toutSelectionner(doublons(), 'rare'))">Toutes les Rares</button>
+      <button class="lien" (click)="majSelection(vide)">Vider</button>
     </div>
 
     <ul class="liste">
       @for (d of doublons(); track d.carteId) {
         <li>
-          <input type="checkbox" [checked]="selection().has(d.carteId)" (change)="selection.set(basculer(selection(), d))"
+          <input type="checkbox" [checked]="selection().has(d.carteId)" (change)="majSelection(basculer(selection(), d))"
             [attr.aria-label]="'Sélectionner ' + d.titre" />
           <span class="pastille" [class]="d.rarete"></span>
           <span class="nom"><strong>{{ d.titre }}</strong> <span class="gris">{{ libRarete[d.rarete] }} · {{ d.prixUnitaire }} pièces</span></span>
           <input class="champ quantite" type="number" min="0" [max]="d.vendables" [value]="selection().get(d.carteId) ?? 0"
-            (change)="selection.set(definirQuantite(selection(), d, +$any($event.target).value))" />
+            (change)="saisir(d, $any($event.target))" />
           <span class="gris">/ {{ d.vendables }}</span>
         </li>
       } @empty {
@@ -38,7 +38,7 @@ import { Selection, basculer, definirQuantite, totalSelection, toutSelectionner 
     <div class="barre">
       @if (confirmation()) {
         <span>Vendre {{ total().cartes }} cartes pour {{ total().pieces }} pièces ?</span>
-        <button class="bouton" (click)="vendre()" [disabled]="enCours()">Confirmer</button>
+        <button class="bouton" (click)="vendre()" [disabled]="enCours() || total().cartes === 0">Confirmer</button>
         <button class="lien" (click)="confirmation.set(false)">Annuler</button>
       } @else {
         <span>{{ total().cartes }} cartes · <strong>+{{ total().pieces }} pièces</strong></span>
@@ -76,9 +76,21 @@ export class PageDoublons implements OnInit {
     }
   }
 
+  protected majSelection(sel: Selection) {
+    this.selection.set(sel);
+    if (totalSelection(this.doublons(), sel).cartes === 0) this.confirmation.set(false);
+  }
+
+  protected saisir(d: Doublon, input: HTMLInputElement) {
+    this.majSelection(definirQuantite(this.selection(), d, +input.value));
+    input.value = String(this.selection().get(d.carteId) ?? 0);
+  }
+
   async vendre() {
+    if (this.enCours() || this.total().cartes === 0) return;
     this.enCours.set(true);
     this.erreur.set('');
+    this.message.set('');
     try {
       const ventes = [...this.selection()].map(([carteId, quantite]) => ({ carteId, quantite }));
       const r = await this.api.vendre(ventes);
