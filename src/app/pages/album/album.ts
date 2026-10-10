@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ApiService, messageErreur } from '../../core/api';
@@ -52,7 +52,7 @@ import { CarteVisuelle } from '../../ui/carte/carte';
     </div>
   `,
 })
-export class PageAlbumComposant implements OnInit {
+export class PageAlbumComposant implements OnInit, OnDestroy {
   private api = inject(ApiService);
   protected raretes = RARETES;
   protected types = TYPES;
@@ -68,21 +68,29 @@ export class PageAlbumComposant implements OnInit {
   protected erreur = signal('');
   private delaiRecherche?: ReturnType<typeof setTimeout>;
 
-  ngOnInit() { this.charger(); }
+  private requete = 0;
 
-  private async charger(ajouter = false) {
+  ngOnInit() { this.charger(); }
+  ngOnDestroy() { clearTimeout(this.delaiRecherche); }
+
+  private async charger(ajouter = false, pagePrecedente = 1) {
+    const id = ++this.requete;
+    const filtres = this.filtres();
     this.enCours.set(true);
     this.erreur.set('');
     try {
-      const page = await this.api.album(this.filtres());
+      const page = await this.api.album(filtres);
+      if (id !== this.requete) return;
       this.cartes.update((c) => (ajouter ? [...c, ...page.cartes] : page.cartes));
       this.total.set(page.total);
       this.possedees.set(page.possedees);
       this.tailleCatalogue.set(page.tailleCatalogue);
     } catch (e) {
+      if (id !== this.requete) return;
+      if (ajouter) this.filtres.update((f) => ({ ...f, page: pagePrecedente }));
       this.erreur.set(messageErreur(e));
     } finally {
-      this.enCours.set(false);
+      if (id === this.requete) this.enCours.set(false);
     }
   }
 
@@ -106,6 +114,6 @@ export class PageAlbumComposant implements OnInit {
 
   pageSuivante() {
     this.filtres.update((f) => ({ ...f, page: f.page + 1 }));
-    this.charger(true);
+    this.charger(true, this.filtres().page - 1);
   }
 }
