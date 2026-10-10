@@ -5,6 +5,7 @@ import { PagePaquets } from './pages/paquets/paquets';
 import { PageAlbumComposant } from './pages/album/album';
 import { PageCarte } from './pages/carte/carte-detail';
 import { PageDoublons } from './pages/doublons/doublons';
+import { PageProfil } from './pages/profil/profil';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'paquets' },
@@ -19,6 +20,7 @@ export const routes: Routes = [
       // PAGES (ajoutées par les tâches suivantes)
       { path: 'album', component: PageAlbumComposant },
       { path: 'doublons', component: PageDoublons },
+      { path: 'profil', component: PageProfil },
     ],
   },
   { path: '**', redirectTo: 'paquets' },
