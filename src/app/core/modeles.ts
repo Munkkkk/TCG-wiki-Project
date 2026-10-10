@@ -61,3 +61,11 @@ export interface Doublon {
 }
 
 export interface ResultatVente { cartesVendues: number; piecesGagnees: number; pieces: number; }
+
+export interface Collection {
+  possedees: number;
+  tailleCatalogue: number;
+  parRarete: Record<Rarete, number>;
+  taux: Record<Rarete, number>;
+  pitie: number;
+}

@@ -1,0 +1,56 @@
+/* Tailles en cqw : le booster garde ses proportions à toutes les largeurs. */
+:host { display: block; container-type: inline-size; }
+
+.sachet {
+  position: relative; aspect-ratio: 5 / 8; overflow: hidden;
+  color: #ededed; font-family: var(--police);
+  background: radial-gradient(circle at 50% 35%, #26262c, #0b0b0d 70%);
+  box-shadow: 0 10cqw 20cqw rgb(0 0 0 / 0.6);
+}
+/* Bords dentelés (sertissage du sachet) */
+.sachet::before, .sachet::after {
+  content: ''; position: absolute; left: 0; right: 0; height: 4.5cqw; z-index: 5;
+  background:
+    linear-gradient(135deg, var(--fond) 50%, transparent 50%) 0 0 / 4.5cqw 4.5cqw,
+    linear-gradient(225deg, var(--fond) 50%, transparent 50%) 0 0 / 4.5cqw 4.5cqw;
+}
+.sachet::before { top: 0; }
+.sachet::after { bottom: 0; transform: scaleY(-1); }
+
+.motif { position: absolute; inset: 0; background: repeating-linear-gradient(45deg, transparent 0 7cqw, rgb(255 255 255 / 0.025) 7cqw 7.5cqw); }
+.bande {
+  position: absolute; left: 0; right: 0; height: 8cqw; z-index: 2;
+  background: linear-gradient(90deg, #b8862b, #f9d976, #fff3b0, #f9d976, #b8862b);
+}
+.haut { top: 4.5cqw; }
+.bas { bottom: 4.5cqw; }
+
+.centre {
+  position: absolute; inset: 0; z-index: 3;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3.5cqw;
+}
+.medaille {
+  width: 44cqw; aspect-ratio: 1; border-radius: 50%;
+  display: grid; place-items: center;
+  border: 0.6cqw solid #f9d976; color: #f9d976;
+  font: 700 22cqw/1 Georgia, serif;
+  box-shadow: 0 0 12cqw rgb(249 217 118 / 0.35), inset 0 0 9cqw rgb(249 217 118 / 0.2);
+}
+.nom { font-size: 10.5cqw; font-weight: 700; letter-spacing: 0.02em; }
+.points { display: flex; gap: 3cqw; }
+.points i { width: 3.5cqw; height: 3.5cqw; border-radius: 50%; }
+.points .commune { background: var(--commune); }
+.points .rare { background: var(--rare); }
+.points .ultra_rare { background: var(--ultra-rare); }
+.points .super_rare { background: var(--super-rare); }
+.points .legendaire { background: var(--legendaire); }
+.sous { font-size: 4.5cqw; letter-spacing: 0.35em; text-transform: uppercase; color: var(--gris); }
+
+/* Reflet qui balaie le film */
+.reflet {
+  position: absolute; inset: 0; z-index: 4; pointer-events: none;
+  background: linear-gradient(115deg, transparent 35%, rgb(255 255 255 / 0.22) 47%, transparent 58%) 0 0 / 250% 100%;
+  animation: balayer 4s linear infinite;
+}
+@keyframes balayer { from { background-position: 150% 0; } to { background-position: -100% 0; } }
+@media (prefers-reduced-motion: reduce) { .reflet { animation: none; } }

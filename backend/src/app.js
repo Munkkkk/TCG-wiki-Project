@@ -8,6 +8,7 @@ import { routeurPaquets } from './routes/paquets.js';
 import { routeurAlbum } from './routes/album.js';
 import { routeurCartes } from './routes/cartes.js';
 import { routeurDoublons } from './routes/doublons.js';
+import { routeurCollection } from './routes/collection.js';
 
 export function creerApp(db, options = {}) {
   const secret = options.jwtSecret ?? process.env.JWT_SECRET;
@@ -32,6 +33,7 @@ export function creerApp(db, options = {}) {
   app.use('/api/album', exiger, routeurAlbum(db));
   app.use('/api/cartes', exiger, routeurCartes(db));
   app.use('/api/doublons', exiger, routeurDoublons(db));
+  app.use('/api/collection', exiger, routeurCollection(db));
   // ROUTES (ajoutées par les tâches suivantes)
 
   app.use('/api', (req, res) => {

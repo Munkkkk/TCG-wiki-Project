@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import {
-  CarteDetail, Doublon, FiltresAlbum, Moi, PageAlbum, ResultatOuverture, ResultatVente,
+  CarteDetail, Collection, Doublon, FiltresAlbum, Moi, PageAlbum, ResultatOuverture, ResultatVente,
 } from './modeles';
 
 export function messageErreur(e: unknown): string {
@@ -44,6 +44,7 @@ export class ApiService {
   }
   carte(id: number) { return firstValueFrom(this.http.get<CarteDetail>(`/api/cartes/${id}`)); }
   doublons() { return firstValueFrom(this.http.get<{ doublons: Doublon[] }>('/api/doublons')); }
+  collection() { return firstValueFrom(this.http.get<Collection>('/api/collection')); }
   vendre(ventes: { carteId: number; quantite: number }[]) {
     return firstValueFrom(this.http.post<ResultatVente>('/api/doublons/vendre', { ventes }));
   }

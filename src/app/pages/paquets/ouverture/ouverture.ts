@@ -2,18 +2,19 @@ import { Component, computed, input, output, signal } from '@angular/core';
 import { ResultatOuverture } from '../../../core/modeles';
 import { LIBELLES_RARETE } from '../../../core/libelles';
 import { CarteVisuelle } from '../../../ui/carte/carte';
+import { Booster } from '../../../ui/booster/booster';
 import { EffetLegendaire } from './effet-legendaire';
 import { Deroule, apresDechirure, avancer, debut, passer } from './deroule';
 
 @Component({
   selector: 'app-ouverture',
-  imports: [CarteVisuelle, EffetLegendaire],
+  imports: [CarteVisuelle, EffetLegendaire, Booster],
   styleUrl: './ouverture.css',
   template: `
     <div class="voile" role="dialog" aria-modal="true" aria-label="Ouverture du paquet">
       @switch (deroule().phase) {
         @case ('paquet') {
-          <div class="paquet" (animationend)="maj(apresDechirure)">PAQUET</div>
+          <div class="paquet" (animationend)="$event.target === $event.currentTarget && maj(apresDechirure)"><app-booster /></div>
         }
         @case ('pile') {
           <p class="compteur">{{ deroule().index + 1 }} / {{ deroule().cartes.length }}</p>
