@@ -1,14 +1,15 @@
-:host { display: block; }
+/* Les tailles en cqw suivent la largeur de la carte : même ratio texte/image à toutes les tailles. */
+:host { display: block; container-type: inline-size; }
 
 .carte {
   --cadre: var(--commune);
   position: relative;
   aspect-ratio: 5 / 7;
-  border-radius: 12px;
-  padding: 8px;
+  border-radius: 4cqw;
+  padding: 2.6cqw;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 2cqw;
   color: #1b1b1b;
   background: linear-gradient(145deg, color-mix(in srgb, var(--cadre) 70%, white), var(--cadre));
   overflow: hidden;
@@ -21,17 +22,21 @@
   background: linear-gradient(135deg, #f9d976, #e67e22 40%, #fff3b0 60%, #d97706);
 }
 
-.entete, .texte, .stats { background: rgb(255 255 255 / 0.88); border-radius: 6px; }
-.entete { display: flex; justify-content: space-between; align-items: center; gap: 6px; padding: 4px 8px; font-weight: 700; font-size: 13px; }
+.entete, .texte, .stats { background: rgb(255 255 255 / 0.88); border-radius: 2cqw; flex-shrink: 0; }
+.entete { display: flex; justify-content: space-between; align-items: center; gap: 2cqw; padding: 1.4cqw 2.6cqw; font-weight: 700; font-size: 4.8cqw; }
 .titre { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.gemme { width: 10px; height: 10px; border-radius: 50%; background: var(--cadre); box-shadow: 0 0 0 2px white; flex-shrink: 0; }
+.gemme { width: 3.4cqw; height: 3.4cqw; border-radius: 50%; background: var(--cadre); box-shadow: 0 0 0 0.6cqw white; flex-shrink: 0; }
 
-.illustration { position: relative; flex: 1; min-height: 0; border-radius: 6px; overflow: hidden; border: 2px solid rgb(0 0 0 / 0.25); background: #2a2a30; }
+.illustration { position: relative; flex: 1; min-height: 0; border-radius: 2cqw; overflow: hidden; border: 0.6cqw solid rgb(0 0 0 / 0.25); background: #2a2a30; }
 .illustration img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.sans-image { height: 100%; display: grid; place-items: center; font-size: 48px; font-weight: 700; color: rgb(255 255 255 / 0.5); }
+.sans-image { height: 100%; display: grid; place-items: center; font-size: 22cqw; font-weight: 700; color: rgb(255 255 255 / 0.5); }
 
-.texte { margin: 0; padding: 5px 8px; font-size: 11px; line-height: 1.35; max-height: 4.2em; overflow: hidden; }
-.stats { display: flex; justify-content: space-between; padding: 4px 10px; font-weight: 800; font-size: 13px; }
+/* 3 lignes maximum, terminées par « … » : jamais de ligne coupée en deux. */
+.texte {
+  margin: 0; padding: 1.8cqw 2.6cqw; font-size: 3.7cqw; line-height: 1.35;
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-clamp: 3; overflow: hidden;
+}
+.stats { display: flex; justify-content: space-between; padding: 1.4cqw 3.2cqw; font-weight: 800; font-size: 4.6cqw; }
 
 .holo .illustration::after {
   content: '';
@@ -45,7 +50,6 @@
 @keyframes reflet { from { background-position: 150% 0; } to { background-position: -100% 0; } }
 @media (prefers-reduced-motion: reduce) { .holo .illustration::after { animation: none; } }
 
-.mini { padding: 5px; gap: 4px; border-radius: 8px; }
-.mini .entete { font-size: 10px; padding: 2px 5px; }
-.mini .stats { font-size: 10px; padding: 2px 6px; }
-.mini .sans-image { font-size: 28px; }
+/* Petites cartes (album) : textes un peu plus gros en proportion pour rester lisibles. */
+.mini .entete { font-size: 6cqw; }
+.mini .stats { font-size: 5.6cqw; }

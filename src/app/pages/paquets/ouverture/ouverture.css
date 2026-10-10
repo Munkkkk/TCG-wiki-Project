@@ -21,7 +21,7 @@
 /* Pile : une carte à la fois, en grand */
 .compteur { margin: 0; color: var(--gris); font-size: 13px; letter-spacing: 2px; }
 .scene {
-  position: relative; width: min(320px, 78vw); aspect-ratio: 5 / 7;
+  position: relative; width: min(360px, 82vw); aspect-ratio: 5 / 7;
   border: 0; padding: 0; background: none; cursor: pointer; perspective: 1200px;
 }
 .emplacement { position: absolute; inset: 0; z-index: 1; display: block; }
@@ -66,8 +66,8 @@
 .aide { margin: 0; color: var(--gris); font-size: 13px; text-align: center; min-height: 1.4em; }
 
 /* Récapitulatif */
-.recap { display: grid; grid-template-columns: repeat(5, 190px); gap: 18px; }
-@media (max-width: 1100px) { .recap { grid-template-columns: repeat(3, minmax(0, 190px)); } }
+.recap { display: grid; grid-template-columns: repeat(5, 200px); gap: 18px; }
+@media (max-width: 1100px) { .recap { grid-template-columns: repeat(3, minmax(0, 200px)); } }
 @media (max-width: 560px) { .recap { grid-template-columns: repeat(2, minmax(0, 170px)); gap: 12px; } }
 .case { position: relative; animation: arriver 0.4s ease-out both; }
 .case:nth-child(2) { animation-delay: 0.06s; }
