@@ -1,9 +1,11 @@
 .voile {
   position: fixed; inset: 0; z-index: 20;
-  background: rgb(10 10 12 / 0.94);
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px;
-  padding: 20px; overflow-y: auto;
+  background: rgb(10 10 12 / 0.95);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px;
+  padding: 20px; overflow: hidden auto;
 }
+
+/* Déchirure du paquet */
 .paquet {
   width: 200px; height: 280px; border-radius: 10px;
   border: 1px solid var(--bordure); background: var(--surface);
@@ -15,29 +17,74 @@
   60% { transform: scale(1.06) rotate(-2deg); }
   100% { transform: scale(0.6); opacity: 0; clip-path: polygon(0 0, 100% 0, 100% 40%, 0 60%); }
 }
-.cartes { display: grid; grid-template-columns: repeat(5, 170px); gap: 16px; }
-@media (max-width: 960px) { .cartes { grid-template-columns: repeat(3, minmax(0, 150px)); } }
-@media (max-width: 520px) { .cartes { grid-template-columns: repeat(2, minmax(0, 150px)); } }
 
-.emplacement {
-  position: relative; aspect-ratio: 5 / 7; border: 0; padding: 0; background: none; cursor: pointer;
-  perspective: 900px;
+/* Pile : une carte à la fois, en grand */
+.compteur { margin: 0; color: var(--gris); font-size: 13px; letter-spacing: 2px; }
+.scene {
+  position: relative; width: min(320px, 78vw); aspect-ratio: 5 / 7;
+  border: 0; padding: 0; background: none; cursor: pointer; perspective: 1200px;
 }
+.emplacement { position: absolute; inset: 0; z-index: 1; display: block; }
 .dos, .face {
   position: absolute; inset: 0; backface-visibility: hidden;
-  transition: transform 0.5s ease;
+  transition: transform 0.55s cubic-bezier(0.3, 1.4, 0.5, 1);
 }
 .dos {
-  border-radius: 12px; border: 1px solid var(--bordure);
-  background: repeating-linear-gradient(45deg, var(--surface) 0 8px, #202026 8px 16px);
+  border-radius: 14px; border: 1px solid var(--bordure);
+  background: repeating-linear-gradient(45deg, var(--surface) 0 10px, #202026 10px 20px);
 }
-.face { transform: rotateY(180deg); }
+.empilee {
+  transform: translate(calc(var(--rang) * 4px), calc(var(--rang) * 4px));
+  z-index: 0; opacity: calc(1 - var(--rang) * 0.15);
+}
+.face { transform: rotateY(180deg); border-radius: 14px; }
 .retournee .dos { transform: rotateY(-180deg); }
 .retournee .face { transform: rotateY(0); }
+
+/* Ultra Rare / Super Rare : halo de leur couleur */
+.halo .face { box-shadow: 0 0 34px 4px var(--halo); }
+
+/* Teaser Légendaire : le dos vibre et brille avant d'être retourné */
+.teaser .dos {
+  border-color: #f9d976;
+  animation: briller 1.2s ease-in-out infinite, vibrer 0.35s linear infinite;
+}
+@keyframes briller {
+  50% { box-shadow: 0 0 40px 10px rgb(249 217 118 / 0.75); }
+}
+@keyframes vibrer {
+  25% { translate: -2px 1px; }
+  75% { translate: 2px -1px; }
+}
+
+/* Entrée depuis la pile, sortie vers la droite */
+.arrivee { animation: arriver 0.35s ease-out; }
+@keyframes arriver { from { transform: translate(8px, 8px) scale(0.96); } }
+.sortie { animation: sortir 0.4s ease-in forwards; }
+@keyframes sortir { to { transform: translateX(120%) rotate(12deg); opacity: 0; } }
+
+.aide { margin: 0; color: var(--gris); font-size: 13px; text-align: center; min-height: 1.4em; }
+
+/* Récapitulatif */
+.recap { display: grid; grid-template-columns: repeat(5, 190px); gap: 18px; }
+@media (max-width: 1100px) { .recap { grid-template-columns: repeat(3, minmax(0, 190px)); } }
+@media (max-width: 560px) { .recap { grid-template-columns: repeat(2, minmax(0, 170px)); gap: 12px; } }
+.case { position: relative; animation: arriver 0.4s ease-out both; }
+.case:nth-child(2) { animation-delay: 0.06s; }
+.case:nth-child(3) { animation-delay: 0.12s; }
+.case:nth-child(4) { animation-delay: 0.18s; }
+.case:nth-child(5) { animation-delay: 0.24s; }
+.case.legendaire { filter: drop-shadow(0 0 14px rgb(249 217 118 / 0.6)); }
+
 .nouvelle {
-  position: absolute; top: -8px; right: -8px;
+  position: absolute; top: -8px; right: -8px; z-index: 2;
   background: var(--texte); color: var(--fond); font-size: 10px; font-weight: 700;
   padding: 2px 8px; border-radius: 10px;
 }
-.actions { display: flex; gap: 12px; }
-@media (prefers-reduced-motion: reduce) { .paquet { animation-duration: 0.01s; } .dos, .face { transition: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .paquet { animation-duration: 0.01s; }
+  .dos, .face { transition: none; }
+  .teaser .dos { animation: none; box-shadow: 0 0 30px 6px rgb(249 217 118 / 0.6); }
+  .arrivee, .sortie, .case { animation: none; }
+}

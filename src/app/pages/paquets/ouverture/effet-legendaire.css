@@ -1,0 +1,48 @@
+:host {
+  position: absolute; inset: -25%; z-index: 0;
+  display: grid; place-items: center;
+  pointer-events: none;
+}
+
+.flash {
+  position: fixed; inset: 0;
+  background: radial-gradient(circle, rgb(255 243 176 / 0.95), rgb(217 119 6 / 0.6) 35%, transparent 70%);
+  animation: flash 1s ease-out forwards;
+}
+@keyframes flash { 0% { opacity: 0; } 12% { opacity: 1; } 100% { opacity: 0; } }
+
+.rayons {
+  position: absolute; width: 100%; aspect-ratio: 1; border-radius: 50%;
+  background: repeating-conic-gradient(rgb(249 217 118 / 0.4) 0 7deg, transparent 7deg 22deg);
+  -webkit-mask: radial-gradient(circle, #000 25%, transparent 70%);
+  mask: radial-gradient(circle, #000 25%, transparent 70%);
+  animation: apparaitre 0.6s ease-out, tourner 10s linear infinite;
+}
+@keyframes tourner { to { transform: rotate(360deg); } }
+@keyframes apparaitre { from { opacity: 0; transform: scale(0.4); } }
+
+.particule {
+  position: absolute; left: 50%; top: 50%;
+  width: 8px; height: 8px; margin: -4px; border-radius: 50%;
+  background: #f9d976; box-shadow: 0 0 10px #f9d976;
+  opacity: 0;
+  animation: eclat 1.4s ease-out var(--delai) forwards;
+}
+@keyframes eclat {
+  0% { opacity: 1; transform: rotate(var(--angle)) translateY(0) scale(1); }
+  100% { opacity: 0; transform: rotate(var(--angle)) translateY(-240px) scale(0.3); }
+}
+
+.titre {
+  position: absolute; bottom: 2%; margin: 0;
+  color: #f9d976; font-weight: 800; letter-spacing: 8px; font-size: 18px;
+  text-shadow: 0 0 12px rgb(217 119 6 / 0.9);
+  animation: titre 0.8s ease-out 0.3s both;
+}
+@keyframes titre { from { opacity: 0; transform: translateY(12px) scale(0.8); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .rayons, .particule { display: none; }
+  .flash { animation-duration: 0.4s; }
+  .titre { animation: none; }
+}
