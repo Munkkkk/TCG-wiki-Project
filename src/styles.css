@@ -1,1 +1,66 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --fond: #111113;
+  --surface: #1a1a1e;
+  --texte: #ededed;
+  --gris: #8b8b90;
+  --bordure: #26262b;
+  --commune: #a8a29e;
+  --rare: #3b82f6;
+  --ultra-rare: #a855f7;
+  --super-rare: #ec4899;
+  --legendaire: #d97706;
+  --rayon: 8px;
+  --police: Inter, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  background: var(--fond);
+  color: var(--texte);
+  font-family: var(--police);
+  font-size: 15px;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; }
+h1, h2, h3 { font-weight: 600; letter-spacing: -0.02em; margin: 0; }
+.gris { color: var(--gris); }
+
+button, input, select { font: inherit; color: inherit; }
+
+.bouton {
+  display: inline-block;
+  border: 0;
+  border-radius: var(--rayon);
+  padding: 10px 22px;
+  background: var(--texte);
+  color: var(--fond);
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+}
+.bouton:disabled { opacity: 0.35; cursor: not-allowed; }
+.bouton.secondaire { background: none; color: var(--texte); border: 1px solid var(--bordure); }
+
+.lien { background: none; border: 0; padding: 0; color: var(--gris); text-decoration: underline; cursor: pointer; }
+
+.champ {
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: var(--rayon);
+  border: 1px solid var(--bordure);
+  background: var(--surface);
+}
+
+.erreur { color: #f87171; font-size: 13px; }
+.succes { color: #4ade80; font-size: 13px; }
+
+.pastille { display: inline-block; width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.pastille.commune { background: var(--commune); }
+.pastille.rare { background: var(--rare); }
+.pastille.ultra_rare { background: var(--ultra-rare); }
+.pastille.super_rare { background: var(--super-rare); }
+.pastille.legendaire { background: var(--legendaire); }

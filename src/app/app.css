@@ -1,0 +1,2 @@
+.contenu { max-width: 1100px; margin: 0 auto; padding: 32px 28px; }
+@media (max-width: 767px) { .contenu { padding: 20px 16px; } }
