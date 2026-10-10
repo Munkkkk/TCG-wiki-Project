@@ -24,6 +24,8 @@ describe('CarteVisuelle', () => {
     expect(el.textContent).toContain('Personnalité');
     expect(el.textContent).toContain('92');
     expect(el.querySelector('img')?.getAttribute('src')).toBe('https://img/napoleon.jpg');
+    expect(el.querySelector('.rarete')?.textContent?.trim()).toBe('Légendaire');
+    expect(el.querySelector('.texte')?.textContent).toContain('Empereur des Français.');
   });
 
   it('pas de holo pour une Commune ; initiale si pas d’image ; pas d’extrait en mini', () => {

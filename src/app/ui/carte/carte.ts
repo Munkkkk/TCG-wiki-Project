@@ -4,15 +4,12 @@ import { LIBELLES_RARETE, LIBELLES_TYPE } from '../../core/libelles';
 
 const HOLO = new Set(['ultra_rare', 'super_rare', 'legendaire']);
 
+/** Carte « plein cadre » : l'image remplit la carte, le texte est posé sur un dégradé. */
 @Component({
   selector: 'app-carte',
   styleUrl: './carte.css',
   template: `
     <article class="carte" [class]="'rarete-' + carte().rarete" [class.holo]="holo()" [class.mini]="taille() === 'mini'">
-      <header class="entete">
-        <span class="titre">{{ carte().titre }}</span>
-        <span class="gemme" [attr.title]="libelleRarete()"></span>
-      </header>
       <div class="illustration">
         @if (carte().imageUrl) {
           <img [src]="carte().imageUrl" [alt]="carte().titre" loading="lazy" />
@@ -20,12 +17,19 @@ const HOLO = new Set(['ultra_rare', 'super_rare', 'legendaire']);
           <div class="sans-image">{{ carte().titre.charAt(0) }}</div>
         }
       </div>
-      @if (taille() === 'normale') {
-        <p class="texte"><strong>{{ libelleType() }}</strong> · {{ carte().extrait }}</p>
-      }
-      <footer class="stats">
-        <span>ATQ {{ carte().attaque }}</span>
-        <span>DÉF {{ carte().defense }}</span>
+      <header class="entete">
+        <span class="rarete">{{ libelleRarete() }}</span>
+        <span class="type">{{ libelleType() }}</span>
+      </header>
+      <footer class="bas">
+        <h3 class="titre">{{ carte().titre }}</h3>
+        @if (taille() === 'normale') {
+          <p class="texte">{{ carte().extrait }}</p>
+        }
+        <div class="stats">
+          <span><b>{{ carte().attaque }}</b>ATQ</span>
+          <span><b>{{ carte().defense }}</b>DÉF</span>
+        </div>
       </footer>
     </article>
   `,
