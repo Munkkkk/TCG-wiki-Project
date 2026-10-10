@@ -28,7 +28,7 @@ import { SessionService } from '../../core/session';
           <button class="bouton secondaire" type="submit">Renommer</button>
         </form>
         <label class="option">
-          <input type="checkbox" [checked]="moi.venteAutoCommunes" (change)="basculerVenteAuto(!moi.venteAutoCommunes)" />
+          <input type="checkbox" [checked]="moi.venteAutoCommunes" [disabled]="enCours()" (change)="basculerVenteAuto($event)" />
           Revendre automatiquement les Communes en double à l'ouverture
         </label>
         @if (message()) { <p class="succes">{{ message() }}</p> }
@@ -46,6 +46,7 @@ export class PageProfil implements OnInit {
   protected possedees = signal(0);
   protected message = signal('');
   protected erreur = signal('');
+  protected enCours = signal(false);
 
   async ngOnInit() {
     try {
@@ -56,24 +57,39 @@ export class PageProfil implements OnInit {
     }
   }
 
-  private async maj(changements: { pseudo?: string; venteAutoCommunes?: boolean }, succes: string) {
+  private async maj(changements: { pseudo?: string; venteAutoCommunes?: boolean }, succes: string): Promise<boolean> {
+    if (this.enCours()) return false;
+    this.enCours.set(true);
     this.message.set('');
     this.erreur.set('');
     try {
       this.session.definir(await this.api.majMoi(changements));
       this.message.set(succes);
+      return true;
     } catch (e) {
       this.erreur.set(messageErreur(e));
+      return false;
+    } finally {
+      this.enCours.set(false);
     }
   }
 
   changerPseudo() { return this.maj({ pseudo: this.pseudo }, 'Pseudo mis à jour.'); }
-  basculerVenteAuto(actif: boolean) {
-    return this.maj({ venteAutoCommunes: actif }, actif ? 'Vente automatique activée.' : 'Vente automatique désactivée.');
+
+  async basculerVenteAuto(evenement: Event) {
+    const caseACocher = evenement.target as HTMLInputElement;
+    const actif = caseACocher.checked;
+    const ok = await this.maj({ venteAutoCommunes: actif }, actif ? 'Vente automatique activée.' : 'Vente automatique désactivée.');
+    if (!ok) caseACocher.checked = this.session.moi()?.venteAutoCommunes ?? false;
   }
 
   async deconnecter() {
-    await this.api.deconnexion();
+    try {
+      await this.api.deconnexion();
+    } catch (e) {
+      this.erreur.set(messageErreur(e));
+      return;
+    }
     this.session.vider();
     await this.router.navigateByUrl('/connexion');
   }
