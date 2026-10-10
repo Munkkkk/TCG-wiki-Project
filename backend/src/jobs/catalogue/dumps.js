@@ -1,4 +1,4 @@
-import { Readable } from 'node:stream';
+import { Readable, PassThrough, pipeline } from 'node:stream';
 import { createInterface } from 'node:readline';
 import bz2 from 'unbzip2-stream';
 import { JEU } from '../../config/jeu.js';
@@ -42,10 +42,14 @@ export async function importerMois(db, mois, lignes, seuil) {
   return retenus.length;
 }
 
-async function lignesDepuisUrl(url) {
-  const rep = await fetch(url, { headers: { 'User-Agent': process.env.WIKI_USER_AGENT } });
+export async function lignesDepuisUrl(url, { userAgent = process.env.WIKI_USER_AGENT, fetchFn = fetch } = {}) {
+  if (!userAgent) throw new Error('WIKI_USER_AGENT manquant (politique Wikimedia)');
+  const rep = await fetchFn(url, { headers: { 'User-Agent': userAgent } });
   if (!rep.ok) throw new Error(`Dump indisponible (${rep.status}) : ${url}`);
-  return createInterface({ input: Readable.fromWeb(rep.body).pipe(bz2()), crlfDelay: Infinity });
+  // pipeline propage les erreurs (réseau, bz2) : la sortie est détruite et la lecture des lignes rejette.
+  const decompresse = new PassThrough();
+  pipeline(Readable.fromWeb(rep.body), bz2(), decompresse, () => {});
+  return createInterface({ input: decompresse, crlfDelay: Infinity });
 }
 
 /** Source de production. Le premier lancement télécharge 12 mois (plusieurs heures), les suivants un seul. */

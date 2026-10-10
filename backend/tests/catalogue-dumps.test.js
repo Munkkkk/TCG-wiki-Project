@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll, beforeEach, afterAll } from 'vitest';
 import { preparerBaseTest, viderBase } from './aide/db.js';
-import { urlDumpMensuel, parserLigneDump, importerMois, vuesDepuisDumps } from '../src/jobs/catalogue/dumps.js';
+import { urlDumpMensuel, parserLigneDump, importerMois, vuesDepuisDumps, lignesDepuisUrl } from '../src/jobs/catalogue/dumps.js';
 
 let db;
 beforeAll(async () => { db = await preparerBaseTest(); });
@@ -30,6 +30,32 @@ describe('dumps de vues', () => {
     expect(nb).toBe(2);
     const [lignes] = await db.query('SELECT titre, vues FROM vues_mensuelles ORDER BY titre');
     expect(lignes).toEqual([{ titre: 'Elan', vues: 400 }, { titre: 'Tour Eiffel', vues: 350 }]);
+  });
+
+  it('refuse de télécharger sans User-Agent', async () => {
+    const fetchFn = async () => { throw new Error('ne doit pas être appelé'); };
+    await expect(lignesDepuisUrl('http://x', { userAgent: '', fetchFn })).rejects.toThrow('WIKI_USER_AGENT manquant');
+  });
+
+  it('rejette sur flux corrompu et conserve les données du mois', async () => {
+    await db.query("INSERT INTO vues_mensuelles VALUES ('2026-09', 'Paris', 1000)");
+    const fetchFn = async () => ({
+      ok: true,
+      body: new ReadableStream({ start(c) { c.enqueue(new TextEncoder().encode('pas du bz2 du tout')); c.close(); } }),
+    });
+    const lignes = await lignesDepuisUrl('http://x', { userAgent: 'test', fetchFn });
+    await expect(importerMois(db, '2026-09', lignes, 1)).rejects.toThrow();
+    const [rows] = await db.query('SELECT titre, vues FROM vues_mensuelles');
+    expect(rows).toEqual([{ titre: 'Paris', vues: 1000 }]);
+  });
+
+  it('rejette sur coupure réseau en cours de flux', async () => {
+    const fetchFn = async () => ({
+      ok: true,
+      body: new ReadableStream({ pull(c) { c.error(new Error('réseau coupé')); } }),
+    });
+    const lignes = await lignesDepuisUrl('http://x', { userAgent: 'test', fetchFn });
+    await expect(importerMois(db, '2026-09', lignes, 1)).rejects.toThrow();
   });
 
   it('télécharge seulement les mois manquants, purge les anciens et additionne', async () => {
