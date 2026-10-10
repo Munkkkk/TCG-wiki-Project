@@ -2,41 +2,53 @@ import { Component, inject } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { SessionService } from '../../core/session';
+import { IconeMenu } from './icone';
+import { MENU } from './liens';
 
 @Component({
   selector: 'app-navigation',
-  imports: [RouterLink, RouterLinkActive, DecimalPipe],
+  imports: [RouterLink, RouterLinkActive, DecimalPipe, IconeMenu],
   styleUrl: './navigation.css',
   template: `
     @if (session.moi(); as moi) {
-      <header class="haut">
+      <!-- Ordinateur et tablette : menu latéral -->
+      <aside class="lateral">
         <a routerLink="/paquets" class="marque">WikiCards</a>
-        <nav class="liens">
-          <a routerLink="/paquets" routerLinkActive="actif">Paquets</a>
-          <a routerLink="/album" routerLinkActive="actif">Album</a>
-          <a routerLink="/doublons" routerLinkActive="actif">Doublons</a>
+        <p class="pieces">{{ moi.pieces | number }} pièces</p>
+        <nav class="entrees" aria-label="Menu principal">
+          @for (e of menu; track e.libelle) {
+            @if (e.route) {
+              <a class="lien" [routerLink]="e.route" routerLinkActive="actif" [attr.title]="e.libelle">
+                <app-icone [nom]="e.icone" /><span class="texte">{{ e.libelle }}</span>
+              </a>
+            } @else {
+              <span class="bientot" aria-disabled="true" [attr.title]="e.libelle + ' — bientôt'">
+                <app-icone [nom]="e.icone" /><span class="texte">{{ e.libelle }}</span><small>Bientôt</small>
+              </span>
+            }
+          }
         </nav>
-        <span class="pieces">{{ moi.pieces | number }} pièces</span>
-        <a routerLink="/profil" routerLinkActive="actif" class="profil" aria-label="Profil">{{ moi.pseudo }}</a>
-      </header>
+        <a routerLink="/profil" routerLinkActive="actif" class="lien profil" title="Profil">
+          <app-icone nom="profil" /><span class="texte">{{ moi.pseudo }}</span>
+        </a>
+      </aside>
 
-      <nav class="bas">
-        <a routerLink="/paquets" routerLinkActive="actif">
-          <svg viewBox="0 0 24 24"><rect x="4" y="7" width="16" height="13" rx="2" /><path d="M4 11h16M12 7v13" /></svg>Paquets
-        </a>
-        <a routerLink="/album" routerLinkActive="actif">
-          <svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" /><rect x="13" y="4" width="7" height="7" /><rect x="4" y="13" width="7" height="7" /><rect x="13" y="13" width="7" height="7" /></svg>Album
-        </a>
-        <a routerLink="/doublons" routerLinkActive="actif">
-          <svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 14-5M20 12a8 8 0 0 1-14 5M18 3v4h-4M6 21v-4h4" /></svg>Doublons
-        </a>
-        <a routerLink="/profil" routerLinkActive="actif">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" /><path d="M4 21c1-4 4-6 8-6s7 2 8 6" /></svg>Profil
-        </a>
+      <!-- Mobile : en-tête compact + barre du bas -->
+      <header class="haut-mobile">
+        <a routerLink="/paquets" class="marque">WikiCards</a>
+        <span class="pieces">{{ moi.pieces | number }} pièces</span>
+      </header>
+      <nav class="bas" aria-label="Menu principal">
+        @for (e of menuMobile; track e.libelle) {
+          <a [routerLink]="e.route" routerLinkActive="actif"><app-icone [nom]="e.icone" />{{ e.libelle }}</a>
+        }
+        <a routerLink="/profil" routerLinkActive="actif"><app-icone nom="profil" />Profil</a>
       </nav>
     }
   `,
 })
 export class Navigation {
   protected session = inject(SessionService);
+  protected menu = MENU;
+  protected menuMobile = MENU.filter((e) => e.route);
 }

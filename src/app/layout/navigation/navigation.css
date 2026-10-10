@@ -1,35 +1,54 @@
-.haut {
-  display: flex;
-  align-items: center;
-  gap: 28px;
-  padding: 14px 28px;
-  border-bottom: 1px solid var(--bordure);
+/* ---------- Menu latéral (≥ 768 px) ---------- */
+.lateral {
+  position: sticky; top: 0; height: 100vh;
+  width: 240px;
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 22px 14px;
+  border-right: 1px solid var(--bordure);
+  background: var(--fond);
 }
-.marque { font-weight: 600; font-size: 17px; letter-spacing: -0.02em; text-decoration: none; }
-.liens { display: flex; gap: 22px; }
-.liens a, .profil { color: var(--gris); text-decoration: none; }
-.liens a.actif, .profil.actif { color: var(--texte); font-weight: 600; }
-.pieces { margin-left: auto; color: var(--gris); font-size: 13px; }
+.marque { font-weight: 700; font-size: 19px; letter-spacing: -0.02em; text-decoration: none; padding: 0 10px; }
+.lateral .pieces { margin: 4px 10px 22px; color: var(--gris); font-size: 13px; }
+.entrees { display: flex; flex-direction: column; gap: 2px; }
 
-.bas { display: none; }
+.lien, .bientot {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px; border-radius: 8px;
+  font-size: 14px; text-decoration: none; color: var(--gris);
+  border-left: 2px solid transparent;
+}
+.lien:hover { color: var(--texte); background: var(--surface); }
+.lien.actif { color: var(--texte); font-weight: 600; background: var(--surface); border-left-color: var(--texte); }
+.bientot { opacity: 0.45; cursor: default; }
+.bientot small { margin-left: auto; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; }
+.profil { margin-top: auto; }
 
+.haut-mobile, .bas { display: none; }
+
+/* ---------- Tablette (768–1023 px) : colonne d'icônes ---------- */
+@media (max-width: 1023px) {
+  .lateral { width: 72px; padding: 18px 10px; align-items: center; }
+  .marque { font-size: 0; padding: 0; margin-bottom: 18px; }
+  .marque::before { content: 'W'; font-size: 22px; }
+  .lateral .pieces, .texte, .bientot small { display: none; }
+  .lien, .bientot { justify-content: center; padding: 11px; }
+}
+
+/* ---------- Mobile (< 768 px) : en-tête + barre du bas ---------- */
 @media (max-width: 767px) {
-  .haut { padding: 14px 16px; }
-  .liens, .profil { display: none; }
+  .lateral { display: none; }
+  .haut-mobile {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 16px; border-bottom: 1px solid var(--bordure);
+  }
+  .haut-mobile .marque { padding: 0; font-size: 17px; }
+  .haut-mobile .pieces { color: var(--gris); font-size: 13px; }
   .bas {
-    display: flex;
-    position: fixed;
-    inset: auto 0 0 0;
+    display: flex; position: fixed; inset: auto 0 0 0; z-index: 10;
     justify-content: space-around;
     padding: 8px 0 calc(10px + env(safe-area-inset-bottom));
-    background: var(--fond);
-    border-top: 1px solid var(--bordure);
-    z-index: 10;
+    background: var(--fond); border-top: 1px solid var(--bordure);
   }
-  .bas a { color: var(--gris); text-decoration: none; font-size: 10px; text-align: center; }
+  .bas a { display: flex; flex-direction: column; align-items: center; gap: 3px; color: var(--gris); text-decoration: none; font-size: 10px; }
   .bas a.actif { color: var(--texte); font-weight: 600; }
-  .bas svg {
-    display: block; margin: 0 auto 3px; width: 20px; height: 20px;
-    stroke: currentColor; fill: none; stroke-width: 1.6;
-  }
 }
