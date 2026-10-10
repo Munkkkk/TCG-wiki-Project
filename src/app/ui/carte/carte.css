@@ -1,0 +1,51 @@
+:host { display: block; }
+
+.carte {
+  --cadre: var(--commune);
+  position: relative;
+  aspect-ratio: 5 / 7;
+  border-radius: 12px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: #1b1b1b;
+  background: linear-gradient(145deg, color-mix(in srgb, var(--cadre) 70%, white), var(--cadre));
+  overflow: hidden;
+}
+.rarete-rare { --cadre: var(--rare); }
+.rarete-ultra_rare { --cadre: var(--ultra-rare); }
+.rarete-super_rare { --cadre: var(--super-rare); }
+.rarete-legendaire {
+  --cadre: var(--legendaire);
+  background: linear-gradient(135deg, #f9d976, #e67e22 40%, #fff3b0 60%, #d97706);
+}
+
+.entete, .texte, .stats { background: rgb(255 255 255 / 0.88); border-radius: 6px; }
+.entete { display: flex; justify-content: space-between; align-items: center; gap: 6px; padding: 4px 8px; font-weight: 700; font-size: 13px; }
+.titre { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gemme { width: 10px; height: 10px; border-radius: 50%; background: var(--cadre); box-shadow: 0 0 0 2px white; flex-shrink: 0; }
+
+.illustration { position: relative; flex: 1; min-height: 0; border-radius: 6px; overflow: hidden; border: 2px solid rgb(0 0 0 / 0.25); background: #2a2a30; }
+.illustration img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.sans-image { height: 100%; display: grid; place-items: center; font-size: 48px; font-weight: 700; color: rgb(255 255 255 / 0.5); }
+
+.texte { margin: 0; padding: 5px 8px; font-size: 11px; line-height: 1.35; max-height: 4.2em; overflow: hidden; }
+.stats { display: flex; justify-content: space-between; padding: 4px 10px; font-weight: 800; font-size: 13px; }
+
+.holo .illustration::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 30%, rgb(255 255 255 / 0.55) 45%, rgb(150 255 255 / 0.4) 52%, transparent 65%);
+  background-size: 250% 100%;
+  mix-blend-mode: overlay;
+  animation: reflet 3.5s linear infinite;
+}
+@keyframes reflet { from { background-position: 150% 0; } to { background-position: -100% 0; } }
+@media (prefers-reduced-motion: reduce) { .holo .illustration::after { animation: none; } }
+
+.mini { padding: 5px; gap: 4px; border-radius: 8px; }
+.mini .entete { font-size: 10px; padding: 2px 5px; }
+.mini .stats { font-size: 10px; padding: 2px 6px; }
+.mini .sans-image { font-size: 28px; }
